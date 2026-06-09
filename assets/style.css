@@ -658,11 +658,16 @@ a  { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
 }
+@keyframes mockup-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-18px); }
+}
 .app-mockup-img {
   max-height: 580px;
   width: auto;
   max-width: 100%;
   filter: drop-shadow(0 30px 60px rgba(0,0,0,.7)) drop-shadow(0 0 40px rgba(4,255,0,.1));
+  animation: mockup-float 4s ease-in-out infinite;
 }
 .app-mockup-ph {
   width: 280px;
@@ -1051,3 +1056,137 @@ a  { color: inherit; text-decoration: none; }
   .cta-form { padding: 24px 20px; }
   .hero-actions { flex-direction: column; align-items: flex-start; }
 }
+
+/* ══════════════════════════════════════
+   ANIMAÇÕES AVANÇADAS
+══════════════════════════════════════ */
+
+/* Shimmer nos botões primários */
+@keyframes btn-shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.btn-primary {
+  background: linear-gradient(90deg,
+    var(--accent) 0%, #9fff70 35%, var(--accent) 50%, var(--accent) 100%);
+  background-size: 300% auto;
+  animation: btn-shimmer 3s linear infinite;
+}
+.btn-primary:hover {
+  background: #66ff63;
+  background-size: 100%;
+  animation: none;
+}
+.nav-cta {
+  background: linear-gradient(90deg,
+    var(--accent) 0%, #9fff70 35%, var(--accent) 50%, var(--accent) 100%);
+  background-size: 300% auto;
+  animation: btn-shimmer 3s linear infinite;
+}
+.nav-cta:hover {
+  background: #66ff63;
+  background-size: 100%;
+  animation: none;
+}
+
+/* Orbs flutuantes */
+@keyframes orb-float-1 {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  33%       { transform: translate(24px,-36px) scale(1.06); }
+  66%       { transform: translate(-18px,-18px) scale(.96); }
+}
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50%       { transform: translate(-30px,-24px) scale(1.1); }
+}
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+.bg-orb-1 {
+  width: 520px; height: 520px;
+  bottom: -120px; right: -120px;
+  background: radial-gradient(circle, rgba(4,255,0,.09) 0%, transparent 68%);
+  animation: orb-float-1 11s ease-in-out infinite;
+}
+.bg-orb-2 {
+  width: 320px; height: 320px;
+  top: 8%; left: -80px;
+  background: radial-gradient(circle, rgba(4,255,0,.06) 0%, transparent 68%);
+  animation: orb-float-2 8s ease-in-out infinite;
+}
+.bg-orb-3 {
+  width: 260px; height: 260px;
+  top: 40%; right: 10%;
+  background: radial-gradient(circle, rgba(4,255,0,.05) 0%, transparent 68%);
+  animation: orb-float-1 13s ease-in-out infinite reverse;
+}
+
+/* Glow pulsante no card featured */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(4,255,0,.08), 0 4px 20px rgba(0,0,0,.3); }
+  50%       { box-shadow: 0 0 50px rgba(4,255,0,.2), 0 8px 40px rgba(0,0,0,.5); }
+}
+.servico-card.featured { animation: glow-pulse 3s ease-in-out infinite; }
+
+/* Hover mais dramático nos cards de serviço */
+.servico-card:hover {
+  box-shadow: 0 24px 70px rgba(4,255,0,.1), 0 8px 30px rgba(0,0,0,.6);
+  transform: translateY(-6px);
+}
+
+/* Hover mais dramático nos depoimentos */
+.depo-card:hover {
+  box-shadow: 0 16px 48px rgba(4,255,0,.1), 0 4px 20px rgba(0,0,0,.5);
+  transform: translateY(-5px);
+}
+
+/* Borda verde nos resultados no hover */
+.resultado-item {
+  box-shadow: 0 0 0 1px transparent;
+  transition: box-shadow .3s, transform .4s var(--ease);
+}
+.resultado-item:hover {
+  box-shadow: 0 0 0 1px rgba(4,255,0,.35), 0 20px 50px rgba(0,0,0,.6);
+}
+
+/* App feat slide ao hover */
+.app-feat {
+  transition: transform .25s var(--ease);
+}
+.app-feat:hover { transform: translateX(8px); }
+.app-feat:hover .app-feat-icon {
+  background: rgba(4,255,0,.12);
+  border-color: rgba(4,255,0,.45);
+  transition: background .2s, border-color .2s;
+}
+
+/* Ring pulse no eyebrow dot */
+.hero-eyebrow span { position: relative; }
+.hero-eyebrow span::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  opacity: 0;
+  animation: ring-pulse 2.4s ease-out infinite;
+}
+@keyframes ring-pulse {
+  0%   { transform: scale(.5); opacity: .9; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+/* Stat pop ao entrar na viewport */
+@keyframes stat-pop {
+  0%   { transform: scale(.75); opacity: 0; }
+  70%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.stat-num.counted { animation: stat-pop .55s var(--ease) forwards; }
+
+/* Linha animada nos tags */
+.tag::before { width: 0; transition: width .6s var(--ease) .2s; }
+.tag.tag-visible::before { width: 20px; }

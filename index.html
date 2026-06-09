@@ -114,16 +114,15 @@
     <div class="container">
       <div class="stats-grid">
         <div class="stat-item reveal">
-          <div class="stat-num">+200</div>
+          <div class="stat-num" data-count="200" data-prefix="+">+200</div>
           <div class="stat-label">Alunos atendidos</div>
         </div>
         <div class="stat-item reveal reveal-delay-1">
-          <div class="stat-num">8</div>
+          <div class="stat-num" data-count="8">8</div>
           <div class="stat-label">Anos de experiência</div>
         </div>
         <div class="stat-item reveal reveal-delay-2">
-          <!-- EDITAR: coloque a média de kg perdidos ou ganhos pelos alunos -->
-          <div class="stat-num">96%</div>
+          <div class="stat-num" data-count="96" data-suffix="%">96%</div>
           <div class="stat-label">Taxa de satisfação</div>
         </div>
         <div class="stat-item reveal reveal-delay-3">
@@ -213,7 +212,9 @@
   </section>
 
   <!-- ══ SERVIÇOS ══ -->
-  <section class="section servicos" id="servicos">
+  <section class="section servicos" id="servicos" style="position:relative;overflow:hidden">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
     <div class="container">
       <div class="servicos-header reveal">
         <span class="tag">O que eu ofereço</span>
@@ -432,7 +433,9 @@
   </section>
 
   <!-- ══ DEPOIMENTOS ══ -->
-  <section class="section depoimentos" id="depoimentos">
+  <section class="section depoimentos" id="depoimentos" style="position:relative;overflow:hidden">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-3"></div>
     <div class="container">
       <div class="depo-header reveal">
         <span class="tag">Depoimentos</span>
@@ -675,11 +678,62 @@
       if (e.key === 'Enter' && ['nome','objetivo','modalidade'].includes(e.target.id)) enviarWhatsApp();
     });
 
-    // ── Scroll reveal ──
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    // ── Parallax no fundo do hero ──
+    const gymBg = document.querySelector('.hero-gym-bg');
+    const heroEl = document.querySelector('.hero');
+    if (gymBg && heroEl) {
+      window.addEventListener('scroll', () => {
+        const s = window.scrollY;
+        if (s < heroEl.offsetHeight + 200)
+          gymBg.style.transform = `translateY(${s * 0.28}px)`;
+      }, { passive: true });
+    }
+
+    // ── Contador de stats ──
+    function runCounter(el) {
+      const target = parseInt(el.dataset.count);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const duration = 1600;
+      const start = performance.now();
+      el.classList.add('counted');
+      const tick = now => {
+        const p = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = prefix + Math.floor(ease * target) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+        else el.textContent = prefix + target + suffix;
+      };
+      requestAnimationFrame(tick);
+    }
+
+    // ── Scroll reveal + contador + tags ──
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      });
     }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    const counterObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        if (e.target.dataset.count) runCounter(e.target);
+        counterObs.unobserve(e.target);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.stat-num[data-count]').forEach(el => counterObs.observe(el));
+
+    const tagObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('tag-visible');
+        tagObs.unobserve(e.target);
+      });
+    }, { threshold: 0.8 });
+    document.querySelectorAll('.tag').forEach(el => tagObs.observe(el));
   </script>
 
 </body>
